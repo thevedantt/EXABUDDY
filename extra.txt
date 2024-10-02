@@ -1,0 +1,474 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversational Chatbot</title>
+</head>
+<body>
+    <h1>Document Processing</h1>
+    <form action="/upload" method="POST" enctype="multipart/form-data">
+        <input type="file" name="pdfs" multiple>
+        <button type="submit">Submit & Process</button>
+    </form>
+
+    <h2>Ask a Question:</h2>
+    <form action="/ask" method="POST">
+        <input type="text" name="question" placeholder="Questions About Syllabus:">
+        <button type="submit">Send</button>
+    </form>
+
+    <form action="/clear" method="POST">
+        <button type="submit">Clear History</button>
+    </form>
+
+    <h2>Chat History:</h2>
+    <div>
+        {% for question, answer in zip(past, generated) %}
+            <p><strong>You:</strong> {{ question }}</p>
+            <p><strong>Bot:</strong> {{ answer }}</p>
+        {% endfor %}
+    </div>
+</body>
+</html> ]
+
+
+IDEAMAIN
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exabuddy Chatbot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f1ff;
+            color: #333;
+        }
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+        /* Sidebar */
+        .sidebar {
+            width: 300px;
+            background: linear-gradient(180deg, #b38fe7 0%, #9f8fe7 100%);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .sidebar .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 40px;
+        }
+        .sidebar ul {
+            list-style: none;
+        }
+        .sidebar ul li {
+            margin: 15px 0;
+        }
+        .sidebar ul li a {
+            text-decoration: none;
+            color: #fff;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+        }
+        .sidebar ul li a:hover {
+            opacity: 0.8;
+        }
+        .sidebar ul li a img {
+            margin-right: 10px;
+        }
+        /* Main content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: #f7f9fc;
+        }
+        /* Top Bar */
+        .top-bar {
+            padding: 20px;
+            background-color: #e0e1f3;
+            border-bottom: 1px solid #d1d3e3;
+        }
+        .top-bar h1 {
+            font-size: 28px;
+            color: #4d4d8f;
+        }
+        /* Document display area */
+        .document-area {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+        }
+        .pdf-view {
+            flex: 1;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            overflow-y: scroll;
+        }
+        .chat-area {
+            width: 350px;
+            margin-left: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-area h2 {
+            font-size: 22px;
+            color: #4d4d8f;
+            margin-bottom: 10px;
+        }
+        .chat-history {
+            background-color: white;
+            flex: 1;
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+        }
+        .chat-history p {
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        .chat-history .user {
+            font-weight: bold;
+            color: #4d4d8f;
+        }
+        .chat-history .bot {
+            color: #6f6fa1;
+        }
+        /* Chat input area */
+        .chat-input {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+        }
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border-radius: 15px;
+            border: 1px solid #d1d3e3;
+            font-size: 16px;
+        }
+        .chat-input button {
+            margin-left: 10px;
+            padding: 10px 20px;
+            background-color: #4d4d8f;
+            border: none;
+            border-radius: 15px;
+            color: white;
+            cursor: pointer;
+        }
+        .chat-input button:hover {
+            background-color: #3c3c7a;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo">EXAGRAM</div>
+        <ul>
+            <li><a href="#"><img src="home_icon.png" alt="Home"> HOME</a></li>
+            <li><a href="#"><img src="profile_icon.png" alt="Profile"> Profile</a></li>
+            <li><a href="#"><img src="exabuddy_icon.png" alt="Exabuddy"> EXABUDDY</a></li>
+            <li><a href="#"><img src="vqp_icon.png" alt="VQP Generator"> VQP GENERATOR</a></li>
+            <li><a href="#"><img src="exaconnect_icon.png" alt="Exaconnect"> EXACONNECT</a></li>
+            <li><a href="#"><img src="exavault_icon.png" alt="Exavault"> EXAVAULT</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <h1>EXABUDDY</h1>
+        </div>
+
+        <!-- Document and Chat Area -->
+        <div class="document-area">
+            <!-- PDF Display -->
+            <div class="pdf-view">
+                <p>[PDF Document Displayed Here]</p>
+            </div>
+
+            <!-- Chat Section -->
+            <div class="chat-area">
+                <h2>Questions & Answers</h2>
+                <div class="chat-history">
+                    <!-- Chat History Example -->
+                    {% for question, answer in zip(past, generated) %}
+                        <p><span class="user">You:</span> {{ question }}</p>
+                        <p><span class="bot">Bot:</span> {{ answer }}</p>
+                    {% endfor %}
+                </div>
+
+                <!-- Chat Input -->
+                <form action="/ask" method="POST" class="chat-input">
+                    <input type="text" name="question" placeholder="Type here something...">
+                    <button type="submit">Send</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
+
+
+idea2 WAS GOOD
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversational Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #E6E6FA;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        h1 {
+            text-align: center;
+            color: #4B0082; /* Indigo */
+        }
+
+        h2 {
+            color: #4B0082; /* Indigo */
+            margin-top: 20px;
+        }
+
+        form {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="text"], input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4B0082; /* Indigo */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #6A5ACD; /* SlateBlue */
+        }
+
+        .chat-history {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-history p {
+            margin: 5px 0;
+        }
+
+        strong {
+            color: #4B0082; /* Indigo */
+        }
+    </style>
+</head>
+<body>
+    <h1>Document Processing</h1>
+    <form action="/upload" method="POST" enctype="multipart/form-data">
+        <input type="file" name="pdfs" multiple>
+        <button type="submit">Submit & Process</button>
+    </form>
+
+    <h2>Ask a Question:</h2>
+    <form action="/ask" method="POST">
+        <input type="text" name="question" placeholder="Questions About Syllabus:">
+        <button type="submit">Send</button>
+    </form>
+
+    <form action="/clear" method="POST">
+        <button type="submit">Clear History</button>
+    </form>
+
+    <h2>Chat History:</h2>
+    <div class="chat-history">
+        {% for question, answer in zip(past, generated) %}
+            <p><strong>You:</strong> {{ question }}</p>
+            <p><strong>Bot:</strong> {{ answer }}</p>
+        {% endfor %}
+    </div>
+</body>
+</html>
+
+
+IDEA 3 WAS GOOOD
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversational Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #E6E6FA;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+            display: flex; /* Use flexbox for layout */
+            justify-content: center; /* Center content horizontally */
+            align-items: flex-start; /* Align items to the top */
+        }
+
+        .container {
+            display: flex; /* Make the container a flexbox */
+            width: 80%; /* Set a width for the container */
+            max-width: 1200px; /* Maximum width */
+        }
+
+        .left {
+            flex: 1; /* Allow the image section to grow */
+            display: flex; /* Center image vertically */
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+        }
+
+        .right {
+            flex: 1; /* Allow the form section to grow */
+            padding: 20px; /* Padding around the form section */
+        }
+
+        h1 {
+            text-align: center;
+            color: #4B0082; /* Indigo */
+        }
+
+        h2 {
+            color: #4B0082; /* Indigo */
+            margin-top: 20px;
+        }
+
+        form {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="text"], input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4B0082; /* Indigo */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #6A5ACD; /* SlateBlue */
+        }
+
+        .chat-history {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-history p {
+            margin: 5px 0;
+        }
+
+        strong {
+            color: #4B0082; /* Indigo */
+        }
+
+        img {
+            max-width: 100%; /* Ensure the image is responsive */
+            height: auto; /* Maintain aspect ratio */
+            border-radius: 8px; /* Rounded corners for the image */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left">
+            <img src="exabuddy.jpg">
+        </div>
+        <div class="right">
+            <h1>Document Processing</h1>
+            <form action="/upload" method="POST" enctype="multipart/form-data">
+                <input type="file" name="pdfs" multiple>
+                <button type="submit">Submit & Process</button>
+            </form>
+
+            <h2>Ask a Question:</h2>
+            <form action="/ask" method="POST">
+                <input type="text" name="question" placeholder="Questions About Syllabus:">
+                <button type="submit">Send</button>
+            </form>
+
+            <form action="/clear" method="POST">
+                <button type="submit">Clear History</button>
+            </form>
+
+            <h2>Chat History:</h2>
+            <div class="chat-history">
+                {% for question, answer in zip(past, generated) %}
+                    <p><strong>You:</strong> {{ question }}</p>
+                    <p><strong>Bot:</strong> {{ answer }}</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversational Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #7F5CA3;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+            display: flex; /* Use flexbox for layout */
+            justify-content: center; /* Center content horizontally */
+            align-items: flex-start; /* Align items to the top */
+        }
+
+        .container {
+            display: flex; /* Make the container a flexbox */
+            width: 80%; /* Set a width for the container */
+            max-width: 1200px; /* Maximum width */
+        }
+
+        .left {
+            flex: 1; /* Allow the image section to grow */
+            display: flex; /* Center image vertically */
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+        }
+
+        .right {
+            flex: 1; /* Allow the form section to grow */
+            padding: 20px; /* Padding around the form section */
+        }
+
+        h1 {
+            text-align: center;
+            color: #4B0082; /* Indigo */
+        }
+
+        h2 {
+            color: #4B0082; /* Indigo */
+            margin-top: 20px;
+        }
+
+        form {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #BFADD1;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="text"], input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #9F85BA;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #6F4897; /* Indigo */
+            color: #000000;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #6A5ACD; /* SlateBlue */
+        }
+
+        .chat-history {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #9F85BA;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-history p {
+            margin: 5px 0;
+        }
+
+        strong {
+            color: #4B0082; /* Indigo */
+        }
+
+        img {
+            max-width: 100%; /* Ensure the image is responsive */
+            height: auto; /* Maintain aspect ratio */
+            border-radius: 8px; /* Rounded corners for the image */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left">
+            <img src="buddy.png" alt="Exabuddy Image"> <!-- Random image from placeholder.com -->
+        </div>
+        <div class="right">
+            <h1>Document Processing</h1>
+            <form action="/upload" method="POST" enctype="multipart/form-data">
+                <input type="file" name="pdfs" multiple>
+                <button type="submit">Submit & Process</button>
+            </form>
+
+            <h2>Ask a Question:</h2>
+            <form action="/ask" method="POST">
+                <input type="text" name="question" placeholder="Questions About Syllabus:">
+                <button type="submit">Send</button>
+            </form>
+
+            <form action="/clear" method="POST">
+                <button type="submit">Clear History</button>
+            </form>
+
+            <h2>Chat History:</h2>
+            <div class="chat-history">
+                {% for question, answer in zip(past, generated) %}
+                    <p><strong>You:</strong> {{ question }}</p>
+                    <p><strong>EXABUDDY:</strong> {{ answer }}</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
